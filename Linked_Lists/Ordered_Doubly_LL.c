@@ -1,135 +1,112 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
 
-typedef struct Order
+typedef struct Node
 {
-    int amount;
+    int value;
 
-    struct Order *previous;
-    struct Order *next;
-}Order;
+    struct Node *previous;
+    struct Node *next;
+}Node;
 
-Order *head, *tail;  
+Node *head, *tail;
 
-Order *searchOrder(int amount)
+Node * search(int value)
 {
-    if(head == NULL && tail == NULL)
-    {
-        return NULL;
-    }
-
-    Order *sptr = head;
+    Node *sptr = head;
 
     while(sptr != NULL)
     {
-        if(amount > sptr->amount)
+        if(value < sptr->value)
         {
             return sptr;
         }
-        else
-        {
-            sptr = sptr->next;
-        }
+
+        sptr = sptr->next;
     }
 
     return sptr;
 }
 
-void printOrders()
+void display()
 {
-    printf("\n");
-
-    if(head == NULL && tail == NULL)
+    if(head == NULL)
     {
-        printf("The linked list is empty\n");
-
+        printf("Linked list is empty!\n");
         return;
     }
 
-    Order *pointer = head;
+    Node *ptr = head;
 
-    while(pointer != NULL)
+    while(ptr != NULL)
     {
-        printf("Amount: Rs %d\n", pointer->amount);
-        pointer = pointer->next;
+        printf("%d ", ptr->value);
+
+        ptr = ptr->next;
     }
-    
+
     printf("\n");
 }
 
-Order *createnewOrder(Order *previous, Order *next, int amount)
+Node * create(int value, Node *previous, Node *next)
 {
-    Order *newOrder = (Order *)malloc(sizeof(Order));
+    Node *newNode = (Node *)malloc(sizeof(Node));
 
-    newOrder->amount = amount;
+    newNode->value = value;
+    newNode->previous = previous; 
+    newNode->next = next; 
 
-    newOrder->previous = previous;
-    newOrder->next = next;
-
-    return newOrder;
+    return newNode;
 }
 
 void insert()
 {
-    Order *newOrder, *sptr;
-    int amount;
+    int value;
+    Node * newNode;
 
-    printf("Enter the order amount\n");
-    scanf("%d", &amount);
+    printf("Enter the value\n");
+    scanf("%d", &value);
 
     if(head == NULL && tail == NULL)
     {
-        newOrder = createnewOrder(head, tail, amount);
-
-        head = newOrder;
-        tail = newOrder;
-
-        printf("First node created!\n");
+        newNode = create(value, head, tail);
+        head = newNode;
+        tail = newNode;
 
         return;
     }
 
-    if(amount < head->amount)
+    if(value < head->value)
     {
-        newOrder = createnewOrder(head->previous, head, amount);
+        newNode = create(value, head->previous, head);
 
-        head->previous = newOrder;
-
-        head = newOrder;
+        head->previous = newNode;
+        head = newNode;
 
         return;
     }
 
-    sptr = searchOrder(amount);
+    Node *sptr = search(value);
 
     if(sptr == NULL)
     {
-        newOrder = createnewOrder(tail, tail->next, amount);
+        newNode = create(value, tail, tail->next);
 
-        tail->next = newOrder;
-        tail = newOrder;
-
-        return;
-    }
-
-    newOrder = createnewOrder(sptr, sptr->next, amount);
-
-    if(head == tail)
-    {
-        tail->next = newOrder;
-        tail = newOrder;
+        tail->next = newNode;
+        tail = newNode; 
 
         return;
     }
 
-    sptr->next->previous = newOrder;
-    sptr->next = newOrder;
+    newNode = create(value, sptr->previous, sptr);
+
+    sptr->previous->next = newNode;
+    sptr->previous = newNode;
 }
 
 int main()
 {
-    head = NULL;
+    head = tail = NULL;
 
     int exit = 1;
 
@@ -142,7 +119,7 @@ int main()
 
         if(exit == 0)
         {
-            printOrders();
+            display();
             break;
         }
     }while(1);

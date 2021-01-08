@@ -19,7 +19,7 @@ int main()
     printf("Enter the count\n");
     scanf("%d", &count);
 
-    if(count >= 0)
+    if(count >= 1)
     {
         printf("0 ");
         if(count == 1)
